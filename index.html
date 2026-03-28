@@ -119,8 +119,6 @@
       pointer-events: none;
     }
 
-    /* Removed ::after text overlay */
-
     .crate-icon-wrapper {
       width: 100%;
       aspect-ratio: 1;
@@ -338,7 +336,7 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      min-width: 70px;
+      min-width: 78px; /* widened for balance with new layout */
     }
 
     .gum-btn:hover {
@@ -459,8 +457,8 @@
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      min-width: 110px;
+      gap: 10px;
+      min-width: 155px; /* expanded so "Boosted Lucky Gum" never wraps */
     }
 
     .legend-swatch {
@@ -473,6 +471,8 @@
     .legend-text {
       font-size: 11px;
       color: var(--fg-muted);
+      white-space: nowrap; /* keeps text on one line */
+      line-height: 1.3;
     }
 
     .legend-abbr {
@@ -493,13 +493,13 @@
   <div class="bg-atmosphere"></div>
   <div class="grid-overlay"></div>
 
-  <div class="relative z-10 min-h-screen p-4 md:p-8">
+  <div class="relative z-10 min-h-screen p-3 sm:p-6 md:p-8">
     <header class="text-center mb-8 animate-in" style="animation-delay: 0.1s;">
       <h1 class="text-2xl md:text-3xl font-bold mb-2">Classified Calculator</h1>
       <p class="text-sm text-[var(--fg-muted)]">Ghost Simulator Probability & Cost Calculator</p>
     </header>
 
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-7xl mx-auto">
       <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
         
         <!-- Left Sidebar - Crate Selection -->
@@ -568,7 +568,7 @@
         <!-- Main Area -->
         <main class="lg:col-span-7 animate-in" style="animation-delay: 0.3s;">
           <!-- Statistics Card -->
-          <div class="neu-card p-6 mb-4">
+          <div class="neu-card p-8 mb-4">
             <div class="flex flex-col md:flex-row items-center gap-6">
               <div class="flex-shrink-0">
                 <div class="entity-icon" id="entity-icon">
@@ -630,7 +630,7 @@
           </div>
 
           <!-- Formula Card -->
-          <div class="neu-card p-6">
+          <div class="neu-card p-8">
             <div class="flex items-center justify-center gap-2 mb-5">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2">
                 <circle cx="12" cy="12" r="10"/>
@@ -733,6 +733,16 @@
           </div>
         </main>
       </div>
+
+      <!-- Credit Footer -->
+      <div class="mt-12 text-center pt-8 border-t border-[var(--border)]">
+        <p class="text-sm text-[var(--fg-muted)]">
+          Made with ❤️ from Equinox
+        </p>
+        <p class="text-xs text-[var(--fg-muted)] mt-1">
+          @neocryptech
+        </p>
+      </div>
     </div>
   </div>
 
@@ -805,7 +815,6 @@
     const pillLG = document.getElementById('pill-lg');
 
     // ==================== PLACEHOLDER SVG ====================
-    // Using single quotes inside the SVG to avoid escaping issues in onerror
     const placeholderSVG = `<svg class='crate-icon-placeholder' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5'>
       <path d='M12 2L12 22M2 12L22 12M5.64 5.64L18.36 18.36M18.36 5.64L5.64 18.36'/>
     </svg>`;
