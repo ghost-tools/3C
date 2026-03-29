@@ -336,7 +336,7 @@
       flex-direction: column;
       align-items: center;
       gap: 4px;
-      min-width: 78px; /* widened for balance with new layout */
+      min-width: 78px;
     }
 
     .gum-btn:hover {
@@ -458,7 +458,7 @@
       display: flex;
       align-items: center;
       gap: 10px;
-      min-width: 155px; /* expanded so "Boosted Lucky Gum" never wraps */
+      min-width: 155px;
     }
 
     .legend-swatch {
@@ -471,7 +471,7 @@
     .legend-text {
       font-size: 11px;
       color: var(--fg-muted);
-      white-space: nowrap; /* keeps text on one line */
+      white-space: nowrap;
       line-height: 1.3;
     }
 
@@ -640,17 +640,12 @@
             </div>
             
             <div class="formula-container mb-6" id="formula-container">
-              <!-- Group 1: Parenthesis (B + BLG + E) -->
+              <!-- Group 1: (B + E) -->
               <div class="formula-group">
                 <span class="text-[var(--fg-muted)]">(</span>
                 <div class="formula-box base active" style="color: var(--b-color);" id="box-b">
                   <span>B</span>
                   <span class="mult-pill" style="background: var(--b-color);" id="pill-b">1/100,000</span>
-                </div>
-                <span class="text-[var(--fg-muted)]">+</span>
-                <div class="formula-box inactive" style="color: var(--blg-color);" id="box-blg">
-                  <span>BLG</span>
-                  <span class="mult-pill" style="background: var(--blg-color);" id="pill-blg">+200%</span>
                 </div>
                 <span class="text-[var(--fg-muted)]">+</span>
                 <div class="formula-box inactive" style="color: var(--e-color);" id="box-e">
@@ -663,7 +658,7 @@
               <span class="formula-break-1"></span>
               <span class="text-[var(--fg-muted)]">×</span>
               
-              <!-- Group 2: LG x GP -->
+              <!-- Group 2: LG x GP x GR x CK -->
               <div class="formula-group">
                 <div class="formula-box inactive" style="color: var(--lg-color);" id="box-lg">
                   <span>LG</span>
@@ -674,13 +669,7 @@
                   <span>GP</span>
                   <span class="mult-pill" style="background: var(--gp-color);" id="pill-gp">x2</span>
                 </div>
-              </div>
-
-              <span class="formula-break-2"></span>
-              <span class="text-[var(--fg-muted)]">×</span>
-
-              <!-- Group 3: GR x CK -->
-              <div class="formula-group">
+                <span class="text-[var(--fg-muted)]">×</span>
                 <div class="formula-box inactive" style="color: var(--gr-color);" id="box-gr">
                   <span>GR</span>
                   <span class="mult-pill" style="background: var(--gr-color);" id="pill-gr">x1.1</span>
@@ -691,18 +680,25 @@
                   <span class="mult-pill" style="background: var(--ck-color);" id="pill-ck">x2.5</span>
                 </div>
               </div>
+
+              <span class="formula-break-2"></span>
+              <span class="text-[var(--fg-muted)]">+</span>
+
+              <!-- BLG (now outside everything) -->
+              <div class="formula-group">
+                <div class="formula-box inactive" style="color: var(--blg-color);" id="box-blg">
+                  <span>BLG</span>
+                  <span class="mult-pill" style="background: var(--blg-color);" id="pill-blg">+200%</span>
+                </div>
+              </div>
             </div>
 
-            <!-- Legend -->
+            <!-- Legend (BLG moved to last) -->
             <div class="flex justify-center">
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-2">
                 <div class="legend-item">
                   <div class="legend-swatch" style="background: var(--b-color);"></div>
                   <span class="legend-text"><span class="legend-abbr">B</span> = Base Chance</span>
-                </div>
-                <div class="legend-item">
-                  <div class="legend-swatch" style="background: var(--blg-color);"></div>
-                  <span class="legend-text"><span class="legend-abbr">BLG</span> = Boosted Lucky Gum</span>
                 </div>
                 <div class="legend-item">
                   <div class="legend-swatch" style="background: var(--e-color);"></div>
@@ -724,11 +720,15 @@
                   <div class="legend-swatch" style="background: var(--ck-color);"></div>
                   <span class="legend-text"><span class="legend-abbr">CK</span> = Crate Key</span>
                 </div>
+                <div class="legend-item">
+                  <div class="legend-swatch" style="background: var(--blg-color);"></div>
+                  <span class="legend-text"><span class="legend-abbr">BLG</span> = Boosted Lucky Gum</span>
+                </div>
               </div>
             </div>
 
             <div class="text-center mt-4">
-              <p class="text-xs text-[var(--fg-muted)] opacity-60">Click elements to toggle.</p>
+              <p class="text-xs text-[var(--fg-muted)] opacity-60">Click elements to toggle. BLG now sits completely outside all other multipliers.</p>
             </div>
           </div>
         </main>
@@ -761,9 +761,9 @@
       { price: 135000, name: "Vexflower" },
       { price: 200000, name: "Cosmic Wing" },
       { price: "Void", isVoid: true, keyCost: 5, name: "Cloudwave" },
-      { price: 550000, name: "Sandstorm" },
-      { price: 1000000, name: "Sunspot" },
-      { price: 2500000, name: "Monster Mushi" },
+      { price: 1000000, name: "Sandstorm" },
+      { price: 2500000, name: "Sunspot" },
+      { price: 10000000, name: "Monster Mushi" },
       { price: 10000000, name: "Petal Fly" }
     ];
 
@@ -804,12 +804,12 @@
     const gumSelectorEl = document.getElementById('gum-selector');
 
     const boxB = document.getElementById('box-b');
-    const boxBLG = document.getElementById('box-blg');
     const boxE = document.getElementById('box-e');
     const boxLG = document.getElementById('box-lg');
     const boxGP = document.getElementById('box-gp');
     const boxGR = document.getElementById('box-gr');
     const boxCK = document.getElementById('box-ck');
+    const boxBLG = document.getElementById('box-blg');
 
     const pillB = document.getElementById('pill-b');
     const pillLG = document.getElementById('pill-lg');
@@ -838,21 +838,24 @@
       return num.toLocaleString('en-US', { maximumFractionDigits: 10 }) + '%';
     }
 
-    // ==================== CALCULATION ====================
+    // ==================== CALCULATION (NEW BLG MECHANISM) ====================
     function calculate() {
       const isPet = state.crateType === 'pet' || !state.selectedCrate || state.crateType === null;
       const baseChance = isPet ? 100000 : 25000;
 
-      let additiveBonus = 1;
-      if (state.boostedLuckyGum) additiveBonus += 2;
-      if (state.eventLuck) additiveBonus += 1;
-
+      // Inner multipliers (everything except BLG)
+      const eventAdd = state.eventLuck ? 1 : 0;
       const LG = state.gumMult;
       const GP = state.gamepass ? 2 : 1;
       const GR = state.group ? 1.1 : 1;
       const CK = state.crateKey ? 2.5 : 1;
 
-      const totalMult = additiveBonus * LG * GP * GR * CK;
+      const innerMult = (1 + eventAdd) * LG * GP * GR * CK;
+
+      // BLG is now completely outside → adds +2 (i.e. +200% of the original base) after everything
+      const blgAdd = state.boostedLuckyGum ? 2 : 0;
+
+      const totalMult = innerMult + blgAdd;
 
       const effectiveChance = baseChance / totalMult;
       const probability = 1 / effectiveChance;
@@ -892,15 +895,20 @@
       const baseLabel = isPet ? '1/100,000' : '1/25,000';
       pillB.textContent = baseLabel;
 
-      updateBox(boxBLG, state.boostedLuckyGum);
+      // B is always active
+      boxB.classList.add('active');
+      boxB.classList.remove('inactive', 'glowing');
+
+      // Update E, LG, GP, GR, CK
       updateBox(boxE, state.eventLuck);
-      
       updateBox(boxLG, state.gumMult > 1);
       pillLG.textContent = 'x' + state.gumMult;
-
       updateBox(boxGP, state.gamepass);
       updateBox(boxGR, state.group);
       updateBox(boxCK, state.crateKey);
+
+      // BLG (now outside)
+      updateBox(boxBLG, state.boostedLuckyGum);
     }
 
     function updateBox(box, active) {
@@ -1000,11 +1008,6 @@
       });
 
       // Formula toggles
-      boxBLG.addEventListener('click', () => {
-        state.boostedLuckyGum = !state.boostedLuckyGum;
-        calculate();
-      });
-
       boxE.addEventListener('click', () => {
         state.eventLuck = !state.eventLuck;
         calculate();
@@ -1022,6 +1025,11 @@
 
       boxCK.addEventListener('click', () => {
         state.crateKey = !state.crateKey;
+        calculate();
+      });
+
+      boxBLG.addEventListener('click', () => {
+        state.boostedLuckyGum = !state.boostedLuckyGum;
         calculate();
       });
 
