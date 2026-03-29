@@ -227,7 +227,6 @@
       height: 14px;
     }
 
-    /* Formula Flexbox */
     .formula-container {
       display: flex;
       flex-wrap: wrap;
@@ -241,7 +240,6 @@
       display: contents;
     }
 
-    /* Wrapping behavior for groups */
     .formula-break-1 {
       display: none;
     }
@@ -311,7 +309,6 @@
       text-shadow: 0 1px 2px rgba(0,0,0,0.3);
     }
 
-    /* Gum Container */
     .gum-container {
       background: var(--card-elevated);
       border: 1px solid var(--border);
@@ -387,6 +384,67 @@
       text-transform: uppercase;
       letter-spacing: 1px;
       margin-bottom: 4px;
+    }
+
+    /* Rounding info chip */
+    .rounding-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: var(--card-elevated);
+      border: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--fg-muted);
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      pointer-events: none;
+    }
+
+    .rounding-chip.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .rounding-chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent);
+      flex-shrink: 0;
+      animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.7); }
+    }
+
+    .rounding-chip-label {
+      color: var(--fg-muted);
+    }
+
+    .rounding-chip-exact {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: var(--fg);
+      font-size: 11px;
+    }
+
+    .rounding-chip-rule {
+      padding: 2px 7px;
+      border-radius: 20px;
+      background: rgba(126, 5, 255, 0.15);
+      border: 1px solid rgba(126, 5, 255, 0.3);
+      color: #b57bff;
+      font-weight: 600;
+      font-size: 10px;
+      font-family: 'JetBrains Mono', monospace;
+      white-space: nowrap;
     }
 
     @keyframes fadeSlideUp {
@@ -579,22 +637,36 @@
                 <div class="pill-badge bg-[var(--accent)] text-white text-center" id="entity-name">No Selection</div>
               </div>
 
-              <div class="flex-grow grid grid-cols-2 md:grid-cols-3 gap-4 w-full">
-                <div>
-                  <div class="stat-label">Chance</div>
-                  <div class="stat-value mono" id="chance-percent">0.001%</div>
+              <div class="flex-grow w-full space-y-5">
+                <!-- Row 1: Chance + 1 in X -->
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <div class="stat-label">Chance</div>
+                    <div class="stat-value mono" id="chance-percent">0.001%</div>
+                  </div>
+                  <div>
+                    <div class="stat-label">1 in X</div>
+                    <div class="stat-value mono" id="one-in-x">100,000</div>
+                  </div>
                 </div>
-                <div>
-                  <div class="stat-label">1 in X</div>
-                  <div class="stat-value mono" id="one-in-x">100,000</div>
-                </div>
-                <div>
-                  <div class="stat-label">Expected Cost</div>
-                  <div class="stat-value wrap-text mono text-[var(--accent)]" id="expected-cost">-</div>
-                </div>
-                <div class="col-span-2 md:col-span-3">
-                  <div class="stat-label">Total Luck Multiplier</div>
-                  <div class="text-lg font-semibold" id="total-luck">x1.00</div>
+
+                <!-- Row 2: Expected Cost + Total Luck Multiplier -->
+                <div class="grid grid-cols-2 gap-4">
+                  <div>
+                    <div class="stat-label">Expected Cost</div>
+                    <div class="stat-value wrap-text mono text-[var(--accent)]" id="expected-cost">-</div>
+                    <!-- Rounding info chip — live updated, shown only for gem costs -->
+                    <div class="rounding-chip" id="rounding-chip">
+                      <div class="rounding-chip-dot"></div>
+                      <span class="rounding-chip-label">Exact:</span>
+                      <span class="rounding-chip-exact" id="rounding-exact">—</span>
+                      <span class="rounding-chip-rule" id="rounding-rule">±10K</span>
+                    </div>
+                  </div>
+                  <div>
+                    <div class="stat-label">Total Luck Multiplier</div>
+                    <div class="text-lg font-semibold" id="total-luck">x1.00</div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -640,31 +712,8 @@
             </div>
             
             <div class="formula-container mb-6" id="formula-container">
-              <!-- Group 1: (B + E) -->
+              <!-- GP × GR × CK × ((B × LG) + E + BLG) -->
               <div class="formula-group">
-                <span class="text-[var(--fg-muted)]">(</span>
-                <div class="formula-box base active" style="color: var(--b-color);" id="box-b">
-                  <span>B</span>
-                  <span class="mult-pill" style="background: var(--b-color);" id="pill-b">1/100,000</span>
-                </div>
-                <span class="text-[var(--fg-muted)]">+</span>
-                <div class="formula-box inactive" style="color: var(--e-color);" id="box-e">
-                  <span>E</span>
-                  <span class="mult-pill" style="background: var(--e-color);" id="pill-e">+100%</span>
-                </div>
-                <span class="text-[var(--fg-muted)]">)</span>
-              </div>
-              
-              <span class="formula-break-1"></span>
-              <span class="text-[var(--fg-muted)]">×</span>
-              
-              <!-- Group 2: LG x GP x GR x CK -->
-              <div class="formula-group">
-                <div class="formula-box inactive" style="color: var(--lg-color);" id="box-lg">
-                  <span>LG</span>
-                  <span class="mult-pill" style="background: var(--lg-color);" id="pill-lg">x1</span>
-                </div>
-                <span class="text-[var(--fg-muted)]">×</span>
                 <div class="formula-box inactive" style="color: var(--gp-color);" id="box-gp">
                   <span>GP</span>
                   <span class="mult-pill" style="background: var(--gp-color);" id="pill-gp">x2</span>
@@ -679,56 +728,73 @@
                   <span>CK</span>
                   <span class="mult-pill" style="background: var(--ck-color);" id="pill-ck">x2.5</span>
                 </div>
+                <span class="text-[var(--fg-muted)]">×</span>
+                <span class="text-[var(--fg-muted)]">(</span>
               </div>
 
-              <span class="formula-break-2"></span>
-              <span class="text-[var(--fg-muted)]">+</span>
+              <span class="formula-break-1"></span>
 
-              <!-- BLG (now outside everything) -->
               <div class="formula-group">
+                <span class="text-[var(--fg-muted)]">(</span>
+                <div class="formula-box base active" style="color: var(--b-color);" id="box-b">
+                  <span>B</span>
+                  <span class="mult-pill" style="background: var(--b-color);" id="pill-b">1/100,000</span>
+                </div>
+                <span class="text-[var(--fg-muted)]">×</span>
+                <div class="formula-box inactive" style="color: var(--lg-color);" id="box-lg">
+                  <span>LG</span>
+                  <span class="mult-pill" style="background: var(--lg-color);" id="pill-lg">x1</span>
+                </div>
+                <span class="text-[var(--fg-muted)]">)</span>
+                <span class="text-[var(--fg-muted)]">+</span>
+                <div class="formula-box inactive" style="color: var(--e-color);" id="box-e">
+                  <span>E</span>
+                  <span class="mult-pill" style="background: var(--e-color);" id="pill-e">+100%</span>
+                </div>
+                <span class="text-[var(--fg-muted)]">+</span>
                 <div class="formula-box inactive" style="color: var(--blg-color);" id="box-blg">
                   <span>BLG</span>
                   <span class="mult-pill" style="background: var(--blg-color);" id="pill-blg">+200%</span>
                 </div>
+                <span class="text-[var(--fg-muted)]">)</span>
               </div>
             </div>
 
-            <!-- Legend (BLG moved to last) -->
             <div class="flex justify-center">
               <div class="grid grid-cols-2 sm:grid-cols-4 gap-x-6 gap-y-2">
                 <div class="legend-item">
                   <div class="legend-swatch" style="background: var(--b-color);"></div>
-                  <span class="legend-text"><span class="legend-abbr">B</span> = Base Chance</span>
+                  <span class="legend-text"><span class="legend-abbr">B</span> - Base Chance</span>
                 </div>
                 <div class="legend-item">
                   <div class="legend-swatch" style="background: var(--e-color);"></div>
-                  <span class="legend-text"><span class="legend-abbr">E</span> = Event Luck</span>
+                  <span class="legend-text"><span class="legend-abbr">E</span> - Event Luck</span>
                 </div>
                 <div class="legend-item">
                   <div class="legend-swatch" style="background: var(--lg-color);"></div>
-                  <span class="legend-text"><span class="legend-abbr">LG</span> = Lucky Gum</span>
+                  <span class="legend-text"><span class="legend-abbr">LG</span> - Lucky Gum</span>
                 </div>
                 <div class="legend-item">
                   <div class="legend-swatch" style="background: var(--gp-color);"></div>
-                  <span class="legend-text"><span class="legend-abbr">GP</span> = Gamepass</span>
+                  <span class="legend-text"><span class="legend-abbr">GP</span> - Gamepass</span>
                 </div>
                 <div class="legend-item">
                   <div class="legend-swatch" style="background: var(--gr-color);"></div>
-                  <span class="legend-text"><span class="legend-abbr">GR</span> = Group</span>
+                  <span class="legend-text"><span class="legend-abbr">GR</span> - Group</span>
                 </div>
                 <div class="legend-item">
                   <div class="legend-swatch" style="background: var(--ck-color);"></div>
-                  <span class="legend-text"><span class="legend-abbr">CK</span> = Crate Key</span>
+                  <span class="legend-text"><span class="legend-abbr">CK</span> - Crate Key</span>
                 </div>
                 <div class="legend-item">
                   <div class="legend-swatch" style="background: var(--blg-color);"></div>
-                  <span class="legend-text"><span class="legend-abbr">BLG</span> = Boosted Lucky Gum</span>
+                  <span class="legend-text"><span class="legend-abbr">BLG</span> - Boosted Lucky Gum</span>
                 </div>
               </div>
             </div>
 
             <div class="text-center mt-4">
-              <p class="text-xs text-[var(--fg-muted)] opacity-60">Click elements to toggle. BLG now sits completely outside all other multipliers.</p>
+              <p class="text-xs text-[var(--fg-muted)] opacity-60">Click elements to toggle.</p>
             </div>
           </div>
         </main>
@@ -761,9 +827,9 @@
       { price: 135000, name: "Vexflower" },
       { price: 200000, name: "Cosmic Wing" },
       { price: "Void", isVoid: true, keyCost: 5, name: "Cloudwave" },
-      { price: 1000000, name: "Sandstorm" },
-      { price: 2500000, name: "Sunspot" },
-      { price: 10000000, name: "Monster Mushi" },
+      { price: 550000, name: "Sandstorm" },
+      { price: 1000000, name: "Sunspot" },
+      { price: 2500000, name: "Monster Mushi" },
       { price: 10000000, name: "Petal Fly" }
     ];
 
@@ -802,6 +868,9 @@
     const expectedCostEl = document.getElementById('expected-cost');
     const totalLuckEl = document.getElementById('total-luck');
     const gumSelectorEl = document.getElementById('gum-selector');
+    const roundingChipEl = document.getElementById('rounding-chip');
+    const roundingExactEl = document.getElementById('rounding-exact');
+    const roundingRuleEl = document.getElementById('rounding-rule');
 
     const boxB = document.getElementById('box-b');
     const boxE = document.getElementById('box-e');
@@ -838,54 +907,82 @@
       return num.toLocaleString('en-US', { maximumFractionDigits: 10 }) + '%';
     }
 
-    // ==================== CALCULATION (NEW BLG MECHANISM) ====================
+    // ==================== ROUNDING RULES ====================
+    // < 100,000,000        → nearest 10,000   (±10K)
+    // < 100,000,000,000    → nearest 100,000  (±100K)  [covers 100M–99.9B]
+    // >= 100,000,000,000   → nearest 1,000,000 (±1M)
+    function roundNice(num) {
+      if (num < 100_000_000) {
+        const rounded = Math.round(num / 10_000) * 10_000;
+        return { rounded, ruleLabel: '±10K' };
+      } else if (num < 100_000_000_000) {
+        const rounded = Math.round(num / 100_000) * 100_000;
+        return { rounded, ruleLabel: '±100K' };
+      } else {
+        const rounded = Math.round(num / 1_000_000) * 1_000_000;
+        return { rounded, ruleLabel: '±1M' };
+      }
+    }
+
+    // ==================== CALCULATION ====================
     function calculate() {
       const isPet = state.crateType === 'pet' || !state.selectedCrate || state.crateType === null;
       const baseChance = isPet ? 100000 : 25000;
 
-      // Inner multipliers (everything except BLG)
-      const eventAdd = state.eventLuck ? 1 : 0;
+      const B = 1;
       const LG = state.gumMult;
+      const E = state.eventLuck ? 1 : 0;
+      const BLG = state.boostedLuckyGum ? 2 : 0;
       const GP = state.gamepass ? 2 : 1;
       const GR = state.group ? 1.1 : 1;
       const CK = state.crateKey ? 2.5 : 1;
 
-      const innerMult = (1 + eventAdd) * LG * GP * GR * CK;
-
-      // BLG is now completely outside → adds +2 (i.e. +200% of the original base) after everything
-      const blgAdd = state.boostedLuckyGum ? 2 : 0;
-
-      const totalMult = innerMult + blgAdd;
+      const inner = (B * LG) + E + BLG;
+      const totalMult = GP * GR * CK * inner;
 
       const effectiveChance = baseChance / totalMult;
       const probability = 1 / effectiveChance;
-      const percentChance = (probability * 100);
+      const percentChance = probability * 100;
 
       chancePercentEl.textContent = formatPercent(percentChance);
       oneInXEl.textContent = formatNumber(effectiveChance);
       totalLuckEl.textContent = 'x' + totalMult.toFixed(2);
 
       let costText = "-";
+      let showRoundingChip = false;
+
       if (state.selectedCrate) {
         const N = effectiveChance;
-        
+
         if (state.crateKey) {
-          if (state.selectedCrate.isVoid) {
-            costText = formatNumber(N * 5) + " Crate Keys";
-          } else {
-            costText = formatNumber(N) + " Crate Keys";
-          }
+          costText = state.selectedCrate.isVoid
+            ? formatNumber(N * 5) + " Crate Keys"
+            : formatNumber(N) + " Crate Keys";
         } else {
           if (state.selectedCrate.isVoid) {
             costText = formatNumber(N) + " Crown Keys";
           } else {
-            const gemCost = N * state.selectedCrate.price;
-            costText = formatNumber(gemCost) + " Gems";
+            const exactGems = N * state.selectedCrate.price;
+            const { rounded, ruleLabel } = roundNice(exactGems);
+
+            costText = formatNumber(rounded) + " Gems";
+
+            // Update the rounding chip with live data
+            roundingExactEl.textContent = Math.round(exactGems).toLocaleString('en-US') + ' Gems';
+            roundingRuleEl.textContent = ruleLabel;
+            showRoundingChip = true;
           }
         }
       }
-      
+
       expectedCostEl.textContent = costText;
+
+      // Show or hide the rounding chip
+      if (showRoundingChip) {
+        roundingChipEl.classList.add('visible');
+      } else {
+        roundingChipEl.classList.remove('visible');
+      }
 
       updateFormulaDisplay();
     }
@@ -895,19 +992,13 @@
       const baseLabel = isPet ? '1/100,000' : '1/25,000';
       pillB.textContent = baseLabel;
 
-      // B is always active
-      boxB.classList.add('active');
-      boxB.classList.remove('inactive', 'glowing');
-
-      // Update E, LG, GP, GR, CK
+      updateBox(boxB, true);
       updateBox(boxE, state.eventLuck);
       updateBox(boxLG, state.gumMult > 1);
       pillLG.textContent = 'x' + state.gumMult;
       updateBox(boxGP, state.gamepass);
       updateBox(boxGR, state.group);
       updateBox(boxCK, state.crateKey);
-
-      // BLG (now outside)
       updateBox(boxBLG, state.boostedLuckyGum);
     }
 
@@ -941,8 +1032,8 @@
         const iconPath = type === 'pet' ? `Pets/${crate.name}.webp` : `Boards/${crate.name}.webp`;
         const priceDisplay = crate.isVoid ? 'Void' : formatCompact(crate.price);
 
-        const iconContent = crate.noClassified 
-          ? placeholderSVG 
+        const iconContent = crate.noClassified
+          ? placeholderSVG
           : `<img src="${iconPath}" alt="${crate.name}" onerror="this.parentElement.innerHTML='${placeholderSVG}';">`;
 
         card.innerHTML = `
@@ -977,28 +1068,27 @@
       cardEl.classList.add('selected');
       state.selectedCrate = crate;
       state.crateType = type;
-      
+
       entityNameEl.textContent = crate.name;
-      
+
       const iconPath = type === 'pet' ? `Pets/${crate.name}.webp` : `Boards/${crate.name}.webp`;
       entityIconEl.innerHTML = `<img src="${iconPath}" alt="${crate.name}" onerror="this.parentElement.innerHTML='${placeholderSVG}';">`;
-      
+
       calculate();
     }
 
     // ==================== EVENT LISTENERS ====================
     function initEventListeners() {
-      // Size toggles
       document.querySelectorAll('.size-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           const section = btn.dataset.section;
           const size = btn.dataset.size;
-          
+
           btn.parentElement.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
-          
+
           state.gridSize[section] = size;
-          
+
           if (section === 'pet') {
             renderCrateGrid(petCrates, petCratesEl, 'pet');
           } else {
@@ -1007,33 +1097,12 @@
         });
       });
 
-      // Formula toggles
-      boxE.addEventListener('click', () => {
-        state.eventLuck = !state.eventLuck;
-        calculate();
-      });
+      boxE.addEventListener('click', () => { state.eventLuck = !state.eventLuck; calculate(); });
+      boxGP.addEventListener('click', () => { state.gamepass = !state.gamepass; calculate(); });
+      boxGR.addEventListener('click', () => { state.group = !state.group; calculate(); });
+      boxCK.addEventListener('click', () => { state.crateKey = !state.crateKey; calculate(); });
+      boxBLG.addEventListener('click', () => { state.boostedLuckyGum = !state.boostedLuckyGum; calculate(); });
 
-      boxGP.addEventListener('click', () => {
-        state.gamepass = !state.gamepass;
-        calculate();
-      });
-
-      boxGR.addEventListener('click', () => {
-        state.group = !state.group;
-        calculate();
-      });
-
-      boxCK.addEventListener('click', () => {
-        state.crateKey = !state.crateKey;
-        calculate();
-      });
-
-      boxBLG.addEventListener('click', () => {
-        state.boostedLuckyGum = !state.boostedLuckyGum;
-        calculate();
-      });
-
-      // Gum selector
       gumSelectorEl.querySelectorAll('.gum-btn').forEach(btn => {
         btn.addEventListener('click', () => {
           gumSelectorEl.querySelectorAll('.gum-btn').forEach(b => b.classList.remove('selected'));
